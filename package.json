@@ -1,0 +1,35 @@
+{
+  "name": "@dmitry-n-medvedev/vaitrade",
+  "version": "0.0.0",
+  "description": "VAITrade Coding Challenge",
+  "engines": {
+    "node": "= 13.12.0",
+    "pnpm": "= 4.13.0"
+  },
+  "engineStrict": true,
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dmitry-N-Medvedev/vaitrade.git"
+  },
+  "keywords": [
+    "vaitrade"
+  ],
+  "author": "Dmitry N. Medvedev <dmitry.medvedev@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Dmitry-N-Medvedev/vaitrade/issues"
+  },
+  "homepage": "https://github.com/Dmitry-N-Medvedev/vaitrade#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-chai-friendly": "^0.5.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0"
+  }
+}
