@@ -32,28 +32,28 @@ export const start = ({ port }) => new Promise((resolve, reject) => {
 
       if (query.length > 0 && query.split('=').includes('verbose')) {
         readText(res, async (buffer) => {
+          const data = await calc({
+            buffer,
+            mode: DL_VERBOSITY.VERBOSE,
+          });
+
           res.end(
-            JSON.stringify({
-              data: {
-                overall_ld: await calc({
-                  buffer,
-                  mode: DL_VERBOSITY.VERBOSE,
-                }),
-              },
-            }),
+            JSON.stringify(
+              Object.assign(Object.create(null), { data }),
+            ),
           );
         });
       } else {
         readText(res, async (buffer) => {
+          const data = await calc({
+            buffer,
+            mode: DL_VERBOSITY.NORMAL,
+          });
+
           res.end(
-            JSON.stringify({
-              data: {
-                overall_ld: await calc({
-                  buffer,
-                  mode: DL_VERBOSITY.NORMAL,
-                }),
-              },
-            }),
+            JSON.stringify(
+              Object.assign(Object.create(null), { data }),
+            ),
           );
         });
       }

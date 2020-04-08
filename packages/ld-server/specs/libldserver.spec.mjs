@@ -26,9 +26,17 @@ describe('libldserver', () => {
     },
   };
 
-  before(async () => start({ port }));
+  before(async () => {
+    await start({ port });
 
-  after(async () => stop());
+    expect(isRunning()).to.be.true;
+  });
+
+  after(async () => {
+    await stop();
+
+    expect(isRunning()).to.be.false;
+  });
 
   it('should request /complexity', async () => {
     const url = `http://localhost:${port}/${urls.complexity.default}`;
@@ -39,18 +47,14 @@ describe('libldserver', () => {
       },
     };
 
-    await start({ port });
-    //
     const result = await got.post(url, {
       body: text,
     }).json();
 
     expect(result).to.deep.equal(expectedObject);
-
-    return stop();
   });
 
-  it.only('should request /complexity?mode=verbose', async () => {
+  it('should request /complexity?mode=verbose', async () => {
     const url = `http://localhost:${port}/${urls.complexity.default}?mode=verbose`;
     const text = `
       For the sake of simplicity,
@@ -60,18 +64,14 @@ describe('libldserver', () => {
     const expectedObject = {
       data: {
         sentence_ld: [0.58, 1.0, 0.0],
-        overall_ld: 0.67,
+        overall_ld: 0.65,
       },
     };
 
-    await start({ port });
-    //
     const result = await got.post(url, {
       body: text,
     }).json();
 
     expect(result).to.deep.equal(expectedObject);
-
-    return stop();
   });
 });
