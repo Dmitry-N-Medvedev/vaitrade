@@ -2,6 +2,7 @@ import got from 'got';
 import mocha from 'mocha';
 import chai from 'chai';
 import {
+  configure,
   start,
   stop,
   isRunning,
@@ -25,8 +26,22 @@ describe('libldserver', () => {
       verbose: 'complexity?mode=verbose',
     },
   };
+  const ldConfig = {
+    boundaries: {
+      chars: {
+        lo: 1,
+        up: 1000,
+      },
+      words: {
+        lo: 1,
+        up: 100,
+      },
+    },
+  };
 
   before(async () => {
+    configure(ldConfig);
+
     await start({ port });
 
     expect(isRunning()).to.be.true;
