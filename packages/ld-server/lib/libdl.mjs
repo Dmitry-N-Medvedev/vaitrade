@@ -4,14 +4,21 @@ import {
 import {
   nonLexicalWords,
 } from '../config/non-lexical-words.mjs';
+import {
+  isValid,
+} from './validators/index.mjs';
 
 const sentenceSplitAtRe = /[.?!]/;
 const wordRe = /\w+/gmiu;
-
 const decoder = new TextDecoder('utf-8');
+const INVALID_WEIGHT = -1;
 
-const splitBuffer = ({ buffer, mode }) => {
+const splitBuffer = ({ buffer, mode, config }) => {
   const rawText = decoder.decode(buffer);
+
+  if (isValid({ rawText, config }) === false) {
+    return [];
+  }
 
   switch (mode) {
     case DL_VERBOSITY.NORMAL: {
@@ -51,6 +58,7 @@ const processSentence = (sentence) => {
 export const calc = async ({
   buffer = null,
   mode = DL_VERBOSITY.NORMAL,
+  config = {},
 }) => {
   if (buffer === null) {
     throw new Error('calc(null) - buffer is undefined');
@@ -66,6 +74,7 @@ export const calc = async ({
     const sentences = splitBuffer({
       buffer,
       mode: currentMode,
+      config,
     });
 
     const results = [];
@@ -79,7 +88,7 @@ export const calc = async ({
 
     if (currentMode === DL_VERBOSITY.NORMAL) {
       // eslint-disable-next-line prefer-destructuring
-      result.overall_ld = results[0];
+      result.overall_ld = results[0] || INVALID_WEIGHT;
     }
 
     if (currentMode === DL_VERBOSITY.VERBOSE) {

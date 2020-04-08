@@ -13,6 +13,20 @@ import {
 // eslint-disable-next-line no-unused-vars
 let Server = null;
 let Handle = null;
+// eslint-disable-next-line no-unused-vars
+let Config = null;
+
+export const configure = (config) => {
+  if (typeof config === 'undefined' || config === null) {
+    throw new Error('config is undefined');
+  }
+
+  if (Object.keys(config).length === 0) {
+    throw new Error('config is empty');
+  }
+
+  Config = Object.assign(Object.create(null), config);
+};
 
 export const stop = () => {
   if (Handle !== null) {
@@ -26,37 +40,28 @@ export const stop = () => {
 export const start = ({ port }) => new Promise((resolve, reject) => {
   stop();
 
+  if (Config === null) {
+    throw new Error('config is undefined');
+  }
+
   Server = uWS.App({})
     .post('/complexity', (res, req) => {
       const query = req.getQuery();
+      const mode = (query.length > 0 && query.split('=').includes('verbose')) ? DL_VERBOSITY.VERBOSE : DL_VERBOSITY.NORMAL;
 
-      if (query.length > 0 && query.split('=').includes('verbose')) {
-        readText(res, async (buffer) => {
-          const data = await calc({
-            buffer,
-            mode: DL_VERBOSITY.VERBOSE,
-          });
-
-          res.end(
-            JSON.stringify(
-              Object.assign(Object.create(null), { data }),
-            ),
-          );
+      readText(res, async (buffer) => {
+        const data = await calc({
+          buffer,
+          mode,
+          config: Config,
         });
-      } else {
-        readText(res, async (buffer) => {
-          const data = await calc({
-            buffer,
-            mode: DL_VERBOSITY.NORMAL,
-          });
 
-          res.end(
-            JSON.stringify(
-              Object.assign(Object.create(null), { data }),
-            ),
-          );
-        });
-      }
+        res.end(
+          JSON.stringify(
+            Object.assign(Object.create(null), { data }),
+          ),
+        );
+      });
     })
     .listen(port, (token) => {
       Handle = token;
