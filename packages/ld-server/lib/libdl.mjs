@@ -56,22 +56,36 @@ export const calc = async ({
     throw new Error('calc(null) - buffer is undefined');
   }
 
-  const sentences = splitBuffer({
-    buffer,
-    mode,
-  });
-  const results = [];
+  const result = {};
+  const modes = (mode === DL_VERBOSITY.NORMAL)
+    ? [DL_VERBOSITY.NORMAL]
+    : [DL_VERBOSITY.VERBOSE, DL_VERBOSITY.NORMAL];
 
   // eslint-disable-next-line no-restricted-syntax
-  for await (const sentence of sentences) {
-    results.push(
-      processSentence(sentence),
-    );
+  for await (const currentMode of modes) {
+    const sentences = splitBuffer({
+      buffer,
+      mode: currentMode,
+    });
+
+    const results = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const sentence of sentences) {
+      results.push(
+        processSentence(sentence),
+      );
+    }
+
+    if (currentMode === DL_VERBOSITY.NORMAL) {
+      // eslint-disable-next-line prefer-destructuring
+      result.overall_ld = results[0];
+    }
+
+    if (currentMode === DL_VERBOSITY.VERBOSE) {
+      result.sentence_ld = results;
+    }
   }
 
-  if (mode === DL_VERBOSITY.NORMAL) {
-    return results[0];
-  }
-
-  return results;
+  return result;
 };

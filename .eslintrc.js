@@ -36,5 +36,6 @@ module.exports = {
     }],
     'node/shebang': 0,
     'import/prefer-default-export': 0,
+    'no-irregular-whitespace': 0,
   },
 };
